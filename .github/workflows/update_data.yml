@@ -1,0 +1,52 @@
+name: Update Stock Data
+
+on:
+  schedule:
+    # Run at 14:00 UTC (23:00 KST) every day
+    - cron: '0 14 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        cd data_pipeline
+        pip install -r requirements.txt
+
+    - name: Run Stock Collector (S&P 500 & Valuation)
+      env:
+        FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      run: |
+        cd data_pipeline
+        python collector.py
+
+    - name: Run ETF Collector
+      env:
+        FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      run: |
+        cd data_pipeline
+        python etf_collector.py
+
+    - name: Run Insider Trading Collector
+      env:
+        FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      run: |
+        cd data_pipeline
+        python insider_collector.py
