@@ -26,7 +26,17 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
         return <div className="container mx-auto p-10 text-center">Fund not found.</div>
     }
 
-    // 2. Fetch Holdings from DB
+    // 2. Fetch Latest Report Period to avoid duplicates across quarters
+    const { data: periods } = await supabase
+        .from('fund_holdings')
+        .select('report_period')
+        .eq('fund_id', id)
+        .order('report_period', { ascending: false })
+        .limit(1)
+
+    const latestPeriod = periods?.[0]?.report_period
+
+    // 3. Fetch Holdings from DB (Filtered by Latest Period)
     const { data: dbHoldings, error: holdingsError } = await supabase
         .from('fund_holdings')
         .select(`
@@ -34,6 +44,7 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
             stock_data:symbol ( name, sector )
         `)
         .eq('fund_id', id)
+        .eq('report_period', latestPeriod) // Critical Fix: Filter by latest period
         .order('value', { ascending: false })
 
     // Transform DB holdings to match UI expected format
