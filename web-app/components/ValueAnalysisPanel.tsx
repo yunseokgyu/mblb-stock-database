@@ -83,7 +83,7 @@ export function ValueAnalysisPanel({ holding }: ValueAnalysisPanelProps) {
                                             {priceData.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={entry.color} />
                                             ))}
-                                            <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: number) => `$${val}`} />
+                                            <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: any) => `$${val}`} />
                                             <LabelList dataKey="name" position="bottom" fill="#94a3b8" fontSize={10} dy={10} />
                                         </Bar>
                                     </BarChart>
@@ -118,7 +118,7 @@ export function ValueAnalysisPanel({ holding }: ValueAnalysisPanelProps) {
                                                 {valuationData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={entry.color} />
                                                 ))}
-                                                <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: number) => `${val}x`} />
+                                                <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: any) => `${val}x`} />
                                                 <LabelList dataKey="name" position="bottom" fill="#94a3b8" fontSize={10} dy={10} />
                                             </Bar>
                                         </BarChart>
@@ -161,7 +161,7 @@ export function ValueAnalysisPanel({ holding }: ValueAnalysisPanelProps) {
                                                 <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
                                                     <Cell fill="#a855f7" />
                                                     <Cell fill="#cbd5e1" />
-                                                    <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: number) => `${val}%`} />
+                                                    <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: any) => `${val}%`} />
                                                     <LabelList dataKey="name" position="bottom" fill="#94a3b8" fontSize={10} dy={10} />
                                                 </Bar>
                                             </BarChart>
@@ -211,7 +211,7 @@ export function ValueAnalysisPanel({ holding }: ValueAnalysisPanelProps) {
                                             <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
                                                 <Cell fill="#64748b" />
                                                 <Cell fill="#f59e0b" />
-                                                <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: number) => `$${val}`} />
+                                                <LabelList dataKey="value" position="top" fill="#94a3b8" fontSize={10} formatter={(val: any) => `$${val}`} />
                                                 <LabelList dataKey="name" position="bottom" fill="#94a3b8" fontSize={10} dy={10} />
                                             </Bar>
                                         </BarChart>
