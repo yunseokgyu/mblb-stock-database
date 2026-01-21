@@ -1,0 +1,458 @@
+[
+  {
+    "symbol": "AAPL",
+    "name": "Apple Inc.",
+    "sector": "Technology",
+    "industry": "Consumer Electronics",
+    "market_cap": 3775609176064,
+    "price": 255.517,
+    "changes_percentage": -1.047929,
+    "financials": {
+      "revenue": 416161005568,
+      "netIncome": 112010002432,
+      "grossProfits": 195201007616
+    },
+    "valuation_metrics": {
+      "dcf": 287.58487,
+      "method": "Analyst Target",
+      "stock_price": 255.517,
+      "pe_ratio_ttm": 34.25161,
+      "pb_ratio_ttm": 51.19555,
+      "div_yield_ttm": 0.41,
+      "ev_ebitda_ttm": 26.484
+    },
+    "updated_at": "2026-01-20T10:01:04.458724"
+  },
+  {
+    "symbol": "MSFT",
+    "name": "Microsoft Corporation",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure",
+    "market_cap": 3418215677952,
+    "price": 459.86,
+    "changes_percentage": 0.7007429,
+    "financials": {
+      "revenue": 293812011008,
+      "netIncome": 104912003072,
+      "grossProfits": 202037002240
+    },
+    "valuation_metrics": {
+      "dcf": 622.74536,
+      "method": "Analyst Target",
+      "stock_price": 459.86,
+      "pe_ratio_ttm": 32.683723,
+      "pb_ratio_ttm": 9.415643,
+      "div_yield_ttm": 0.79,
+      "ev_ebitda_ttm": 20.646
+    },
+    "updated_at": "2026-01-20T10:01:04.942104"
+  },
+  {
+    "symbol": "NVDA",
+    "name": "NVIDIA Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "market_cap": 4531098746880,
+    "price": 186.105,
+    "changes_percentage": -0.5397721,
+    "financials": {
+      "revenue": 187141996544,
+      "netIncome": 99198001152,
+      "grossProfits": 131092996096
+    },
+    "valuation_metrics": {
+      "dcf": 253.01793,
+      "method": "Analyst Target",
+      "stock_price": 186.105,
+      "pe_ratio_ttm": 46.065594,
+      "pb_ratio_ttm": 38.04272,
+      "div_yield_ttm": 0.02,
+      "ev_ebitda_ttm": 39.714
+    },
+    "updated_at": "2026-01-20T10:01:05.327653"
+  },
+  {
+    "symbol": "GOOGL",
+    "name": "Alphabet Inc.",
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
+    "market_cap": 3997000269824,
+    "price": 330.0,
+    "changes_percentage": -0.8353864,
+    "financials": {
+      "revenue": 385476001792,
+      "netIncome": 124250996736,
+      "grossProfits": 228095000576
+    },
+    "valuation_metrics": {
+      "dcf": 339.15112,
+      "method": "Analyst Target",
+      "stock_price": 330.0,
+      "pe_ratio_ttm": 32.576504,
+      "pb_ratio_ttm": 10.301876,
+      "div_yield_ttm": 0.25,
+      "ev_ebitda_ttm": 27.056
+    },
+    "updated_at": "2026-01-20T10:01:05.702381"
+  },
+  {
+    "symbol": "AMZN",
+    "name": "Amazon.com, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Internet Retail",
+    "market_cap": 2556244262912,
+    "price": 239.12,
+    "changes_percentage": 0.39466056,
+    "financials": {
+      "revenue": 691330023424,
+      "netIncome": 76482002944,
+      "grossProfits": 345982009344
+    },
+    "valuation_metrics": {
+      "dcf": 295.2145,
+      "method": "Analyst Target",
+      "stock_price": 239.12,
+      "pe_ratio_ttm": 33.77401,
+      "pb_ratio_ttm": 6.91358,
+      "div_yield_ttm": 0,
+      "ev_ebitda_ttm": 18.773
+    },
+    "updated_at": "2026-01-20T10:01:06.090684"
+  },
+  {
+    "symbol": "META",
+    "name": "Meta Platforms, Inc.",
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
+    "market_cap": 1563357216768,
+    "price": 620.25,
+    "changes_percentage": -0.0885934,
+    "financials": {
+      "revenue": 189458006016,
+      "netIncome": 58527997952,
+      "grossProfits": 155381006336
+    },
+    "valuation_metrics": {
+      "dcf": 835.5932,
+      "method": "Analyst Target",
+      "stock_price": 620.25,
+      "pe_ratio_ttm": 27.469,
+      "pb_ratio_ttm": 8.057287,
+      "div_yield_ttm": 0.34,
+      "ev_ebitda_ttm": 15.955
+    },
+    "updated_at": "2026-01-20T10:01:06.474942"
+  },
+  {
+    "symbol": "TSLA",
+    "name": "Tesla, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto Manufacturers",
+    "market_cap": 1455112323072,
+    "price": 437.52,
+    "changes_percentage": -0.23486462,
+    "financials": {
+      "revenue": 95632998400,
+      "netIncome": 5079000064,
+      "grossProfits": 16263999488
+    },
+    "valuation_metrics": {
+      "dcf": 411.151,
+      "method": "Analyst Target",
+      "stock_price": 437.52,
+      "pe_ratio_ttm": 303.8333,
+      "pb_ratio_ttm": 18.18605,
+      "div_yield_ttm": 0,
+      "ev_ebitda_ttm": 132.609
+    },
+    "updated_at": "2026-01-20T10:01:06.859200"
+  },
+  {
+    "symbol": "MMM",
+    "name": "3M Company",
+    "sector": "Industrials",
+    "industry": "Conglomerates",
+    "market_cap": 89375260672,
+    "price": 167.8,
+    "changes_percentage": -1.9287,
+    "financials": {
+      "revenue": 24824999936,
+      "netIncome": 3400999936,
+      "grossProfits": 10172999680
+    },
+    "valuation_metrics": {
+      "dcf": 175.91,
+      "method": "Analyst Target",
+      "stock_price": 167.8,
+      "pe_ratio_ttm": 26.719746,
+      "pb_ratio_ttm": 19.26079,
+      "div_yield_ttm": 1.74,
+      "ev_ebitda_ttm": 15.773
+    },
+    "updated_at": "2026-01-20T10:01:07.246542"
+  },
+  {
+    "symbol": "KO",
+    "name": "Coca-Cola Company (The)",
+    "sector": "Consumer Defensive",
+    "industry": "Beverages - Non-Alcoholic",
+    "market_cap": 303150333952,
+    "price": 70.44,
+    "changes_percentage": -0.056755,
+    "financials": {
+      "revenue": 47663001600,
+      "netIncome": 13031000064,
+      "grossProfits": 29376000000
+    },
+    "valuation_metrics": {
+      "dcf": 79.23391,
+      "method": "Analyst Target",
+      "stock_price": 70.44,
+      "pe_ratio_ttm": 23.324505,
+      "pb_ratio_ttm": 9.698472,
+      "div_yield_ttm": 2.9,
+      "ev_ebitda_ttm": 20.691
+    },
+    "updated_at": "2026-01-20T10:01:07.647695"
+  },
+  {
+    "symbol": "JNJ",
+    "name": "Johnson & Johnson",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General",
+    "market_cap": 526816477184,
+    "price": 218.66,
+    "changes_percentage": -0.414448,
+    "financials": {
+      "revenue": 92148998144,
+      "netIncome": 25119000576,
+      "grossProfits": 62988001280
+    },
+    "valuation_metrics": {
+      "dcf": 212.00166,
+      "method": "Analyst Target",
+      "stock_price": 218.66,
+      "pe_ratio_ttm": 21.147001,
+      "pb_ratio_ttm": 6.63672,
+      "div_yield_ttm": 2.38,
+      "ev_ebitda_ttm": 17.356
+    },
+    "updated_at": "2026-01-20T10:01:08.019418"
+  },
+  {
+    "symbol": "PG",
+    "name": "Procter & Gamble Company (The)",
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products",
+    "market_cap": 338270355456,
+    "price": 144.53,
+    "changes_percentage": -0.0691462,
+    "financials": {
+      "revenue": 84933001216,
+      "netIncome": 16472999936,
+      "grossProfits": 43553001472
+    },
+    "valuation_metrics": {
+      "dcf": 165.31818,
+      "method": "Analyst Target",
+      "stock_price": 144.53,
+      "pe_ratio_ttm": 21.09927,
+      "pb_ratio_ttm": 6.432991,
+      "div_yield_ttm": 2.92,
+      "ev_ebitda_ttm": 14.706
+    },
+    "updated_at": "2026-01-20T10:01:08.471878"
+  },
+  {
+    "symbol": "O",
+    "name": "Realty Income Corporation",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail",
+    "market_cap": 56390057984,
+    "price": 61.42,
+    "changes_percentage": 1.15283,
+    "financials": {
+      "revenue": 5614793216,
+      "netIncome": 962116992,
+      "grossProfits": 5197760000
+    },
+    "valuation_metrics": {
+      "dcf": 63.34524,
+      "method": "Analyst Target",
+      "stock_price": 61.42,
+      "pe_ratio_ttm": 57.401863,
+      "pb_ratio_ttm": 1.4468446,
+      "div_yield_ttm": 5.28,
+      "ev_ebitda_ttm": 16.89
+    },
+    "updated_at": "2026-01-20T10:01:08.854206"
+  },
+  {
+    "symbol": "T",
+    "name": "AT&T Inc.",
+    "sector": "Communication Services",
+    "industry": "Telecom Services",
+    "market_cap": 167962558464,
+    "price": 23.49,
+    "changes_percentage": -1.01138,
+    "financials": {
+      "revenue": 124479995904,
+      "netIncome": 22168000512,
+      "grossProfits": 74282999808
+    },
+    "valuation_metrics": {
+      "dcf": 29.48261,
+      "method": "Analyst Target",
+      "stock_price": 23.49,
+      "pe_ratio_ttm": 7.651466,
+      "pb_ratio_ttm": 1.5083799,
+      "div_yield_ttm": 4.73,
+      "ev_ebitda_ttm": 7.317
+    },
+    "updated_at": "2026-01-20T10:01:09.254875"
+  },
+  {
+    "symbol": "MAIN",
+    "name": "Main Street Capital Corporation",
+    "sector": "Financial Services",
+    "industry": "Asset Management",
+    "market_cap": 5730019328,
+    "price": 63.96,
+    "changes_percentage": -0.373828,
+    "financials": {
+      "revenue": 561289984,
+      "netIncome": 536520000,
+      "grossProfits": 561289984
+    },
+    "valuation_metrics": {
+      "dcf": 62.85714,
+      "method": "Analyst Target",
+      "stock_price": 63.96,
+      "pe_ratio_ttm": 10.589404,
+      "pb_ratio_ttm": 1.9514873,
+      "div_yield_ttm": 6.75,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:09.639811"
+  },
+  {
+    "symbol": "SCHD",
+    "name": "Schwab US Dividend Equity ETF",
+    "sector": "ETF",
+    "industry": null,
+    "market_cap": null,
+    "price": 28.9,
+    "changes_percentage": -0.447816,
+    "financials": {
+      "revenue": null,
+      "netIncome": null,
+      "grossProfits": null
+    },
+    "valuation_metrics": {
+      "dcf": null,
+      "method": "N/A",
+      "stock_price": 28.9,
+      "pe_ratio_ttm": 17.85399,
+      "pb_ratio_ttm": null,
+      "div_yield_ttm": 3.82,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:10.129055"
+  },
+  {
+    "symbol": "JEPI",
+    "name": "JPMorgan Equity Premium Income ",
+    "sector": "ETF",
+    "industry": null,
+    "market_cap": null,
+    "price": 58.41,
+    "changes_percentage": -0.0342298,
+    "financials": {
+      "revenue": null,
+      "netIncome": null,
+      "grossProfits": null
+    },
+    "valuation_metrics": {
+      "dcf": null,
+      "method": "N/A",
+      "stock_price": 58.41,
+      "pe_ratio_ttm": 26.811357,
+      "pb_ratio_ttm": null,
+      "div_yield_ttm": 8.25,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:10.617516"
+  },
+  {
+    "symbol": "SPY",
+    "name": "SPDR S&P 500",
+    "sector": "ETF",
+    "industry": null,
+    "market_cap": 634793099264,
+    "price": 691.66,
+    "changes_percentage": -0.0837884,
+    "financials": {
+      "revenue": null,
+      "netIncome": null,
+      "grossProfits": null
+    },
+    "valuation_metrics": {
+      "dcf": null,
+      "method": "N/A",
+      "stock_price": 691.66,
+      "pe_ratio_ttm": 28.0034,
+      "pb_ratio_ttm": 1.6114346,
+      "div_yield_ttm": 1.07,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:11.099779"
+  },
+  {
+    "symbol": "QQQ",
+    "name": "Invesco QQQ Trust, Series 1",
+    "sector": "ETF",
+    "industry": null,
+    "market_cap": 244136722432,
+    "price": 621.055,
+    "changes_percentage": -0.14952011,
+    "financials": {
+      "revenue": null,
+      "netIncome": null,
+      "grossProfits": null
+    },
+    "valuation_metrics": {
+      "dcf": null,
+      "method": "N/A",
+      "stock_price": 621.055,
+      "pe_ratio_ttm": 33.576214,
+      "pb_ratio_ttm": 1.7358863,
+      "div_yield_ttm": 0.46,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:11.488150"
+  },
+  {
+    "symbol": "VOO",
+    "name": "Vanguard S&P 500 ETF",
+    "sector": "ETF",
+    "industry": null,
+    "market_cap": null,
+    "price": 636.09,
+    "changes_percentage": -0.0832472,
+    "financials": {
+      "revenue": null,
+      "netIncome": null,
+      "grossProfits": null
+    },
+    "valuation_metrics": {
+      "dcf": null,
+      "method": "N/A",
+      "stock_price": 636.09,
+      "pe_ratio_ttm": 28.042229,
+      "pb_ratio_ttm": 1.6274364,
+      "div_yield_ttm": 1.13,
+      "ev_ebitda_ttm": null
+    },
+    "updated_at": "2026-01-20T10:01:11.874085"
+  }
+]

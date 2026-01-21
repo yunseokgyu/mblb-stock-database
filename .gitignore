@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 venv/
 .env
-# credentials.env
+credentials.env
 .DS_Store
 
 # Node.js
@@ -21,3 +21,6 @@ yarn-error.log*
 # IDEs
 .vscode/
 .idea/
+
+# Runtime Data
+processed_symbols.json

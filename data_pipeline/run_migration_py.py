@@ -44,4 +44,4 @@ def run_migration(sql_file_path):
         exit(1)
 
 if __name__ == "__main__":
-    run_migration('../database/dividend_kings.sql')
+    run_migration('../database/add_hedge_funds.sql')

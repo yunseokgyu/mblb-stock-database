@@ -1,142 +1,138 @@
 import os
-import requests
+import yfinance as yf
 import json
 from datetime import datetime
-from dotenv import load_dotenv
-from supabase import create_client, Client
+import time
+from utils.retry_utils import retry
 
-# Load environment variables
-load_dotenv(dotenv_path='../credentials.env')
+# Define JSON Output Path (Next.js Public Folder)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Note: ../web-app/public is standard for Next.js static assets
+JSON_OUTPUT_PATH = os.path.join(script_dir, '..', 'web-app', 'public', 'stock_data.json')
+CHECKPOINT_FILE = os.path.join(script_dir, 'processed_symbols.json')
 
-FMP_API_KEY = os.getenv('FMP_API_KEY')
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+# Static List for MVP
+TARGET_SYMBOLS = [
+    "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", # Tech
+    "MMM", "KO", "JNJ", "PG", "O", "T", "MAIN", "SCHD", "JEPI", # Dividend
+    "SPY", "QQQ", "VOO" # ETF
+]
 
-if not all([FMP_API_KEY, SUPABASE_URL, SUPABASE_KEY]):
-    print("Error: Missing API Keys in credentials.env")
-    exit(1)
-
-# Initialize Supabase Client
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-def fetch_sp500_symbols():
-    """Fetch S&P 500 companies list from FMP"""
-    url = f"https://financialmodelingprep.com/api/v3/sp500_constituent?apikey={FMP_API_KEY}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error fetching S&P 500: {response.status_code}")
-        return []
-
-def fetch_company_profile(symbol):
-    """Fetch company profile (price, mkt cap, sector)"""
-    url = f"https://financialmodelingprep.com/api/v3/profile/{symbol}?apikey={FMP_API_KEY}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data[0] if data else None
-    return None
-
-def fetch_financial_ratios(symbol):
-    """Fetch key financial ratios (TTM)"""
-    url = f"https://financialmodelingprep.com/api/v3/ratios-ttm/{symbol}?apikey={FMP_API_KEY}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data[0] if data else {}
-    return {}
-
-def fetch_dcf(symbol):
-    """Fetch Discounted Cash Flow value"""
-    url = f"https://financialmodelingprep.com/api/v3/discounted-cash-flow/{symbol}?apikey={FMP_API_KEY}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data[0] if data else {}
-    return {}
-
-def fetch_insider_trading(symbol, limit=10):
-    """Fetch recent insider trading activity"""
-    url = f"https://financialmodelingprep.com/api/v4/insider-trading?symbol={symbol}&limit={limit}&apikey={FMP_API_KEY}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    return []
-
-def update_stock_data():
-    """Main function to update Price, Financials, and Valuation"""
-    print("Fetching S&P 500 list...")
-    sp500_list = fetch_sp500_symbols()
-    
-    # For testing, limit to first 5
-    # sp500_list = sp500_list[:5] 
-
-    for item in sp500_list:
-        symbol = item['symbol']
-        print(f"Processing {symbol}...")
-        
+def load_checkpoint():
+    if os.path.exists(CHECKPOINT_FILE):
         try:
-            profile = fetch_company_profile(symbol)
-            if not profile:
-                continue
+            with open(CHECKPOINT_FILE, 'r') as f:
+                return set(json.load(f))
+        except:
+            return set()
+    return set()
 
-            ratios = fetch_financial_ratios(symbol)
-            dcf = fetch_dcf(symbol)
+def save_checkpoint(processed):
+    with open(CHECKPOINT_FILE, 'w') as f:
+        json.dump(list(processed), f)
+
+@retry(max_retries=3, initial_delay=2, backoff_factor=2)
+def process_symbol(symbol):
+    print(f"Processing {symbol}...")
+    ticker = yf.Ticker(symbol)
+    # Force fetch to trigger potential network errors enabling retry
+    info = ticker.info
+    
+    # Map yfinance info to our schema
+    price = info.get('currentPrice') or info.get('regularMarketPrice') or info.get('previousClose')
+    if not price:
+        print(f"Skipping {symbol}: No price data")
+        return None
+
+    market_cap = info.get('marketCap')
+    sector = info.get('sector', 'ETF' if info.get('quoteType') == 'ETF' else 'Unknown')
+    name = info.get('shortName') or info.get('longName')
+    
+    pe_ratio = info.get('trailingPE')
+    pb_ratio = info.get('priceToBook')
+    div_yield = info.get('dividendYield', 0)
+    target_price = info.get('targetMeanPrice')
+    
+    valuation_metrics = {
+        'dcf': target_price,
+        'method': 'Analyst Target' if target_price else 'N/A',
+        'stock_price': price,
+        'pe_ratio_ttm': pe_ratio,
+        'pb_ratio_ttm': pb_ratio,
+        'div_yield_ttm': div_yield,
+        'ev_ebitda_ttm': info.get('enterpriseToEbitda')
+    }
+    
+    change_p = info.get('regularMarketChangePercent') or 0.0
+
+    data = {
+        'symbol': symbol,
+        'name': name,
+        'sector': sector,
+        'industry': info.get('industry'),
+        'market_cap': market_cap,
+        'price': price,
+        'changes_percentage': change_p, 
+        'financials': {
+            'revenue': info.get('totalRevenue'),
+            'netIncome': info.get('netIncomeToCommon'),
+            'grossProfits': info.get('grossProfits')
+        }, 
+        'valuation_metrics': valuation_metrics,
+        'updated_at': datetime.utcnow().isoformat()
+    }
+    return data
+
+def fetch_and_save_data():
+    print(f"Starting data collection for {len(TARGET_SYMBOLS)} symbols via yfinance...")
+    
+    # Load existing data to append/update instead of overwrite if resuming
+    all_stocks = []
+    if os.path.exists(JSON_OUTPUT_PATH):
+        try:
+            with open(JSON_OUTPUT_PATH, 'r', encoding='utf-8') as f:
+                all_stocks = json.load(f)
+        except:
+            all_stocks = []
             
-            # Construct Valuation Metrics JSON
-            valuation_metrics = {
-                'dcf': dcf.get('dcf'),
-                'stock_price': dcf.get('Stock Price'),
-                'pe_ratio_ttm': ratios.get('peRatioTTM'),
-                'pb_ratio_ttm': ratios.get('priceToBookRatioTTM'),
-                'div_yield_ttm': ratios.get('dividendYielTTM'),
-                'ev_ebitda_ttm': ratios.get('enterpriseValueMultipleTTM')
-            }
+    # Create a map for easy update
+    stock_map = {item['symbol']: item for item in all_stocks}
+    
+    processed_symbols = load_checkpoint()
+    
+    # Check if we should reset checkpoint (e.g., if all done, or simple manual reset logic)
+    # For this simple bot, we'll assume if len(processed) == len(TARGET), we reset.
+    if len(processed_symbols) >= len(TARGET_SYMBOLS):
+        print("All symbols previously processed. Resetting checkpoint for new run.")
+        processed_symbols = set()
+        save_checkpoint(processed_symbols)
+
+    for symbol in TARGET_SYMBOLS:
+        if symbol in processed_symbols:
+            print(f"Skipping {symbol} (Already processed).")
+            continue
             
-            # Construct Data Record
-            data = {
-                'symbol': symbol,
-                'name': profile.get('companyName'),
-                'sector': profile.get('sector'),
-                'industry': profile.get('industry'),
-                'market_cap': profile.get('mktCap'),
-                'price': profile.get('price'),
-                'changes_percentage': profile.get('changes'),
-                'financials': {}, # Can expand later
-                'valuation_metrics': valuation_metrics,
-                'updated_at': datetime.utcnow().isoformat()
-            }
-            
-            # Upsert to Supabase
-            supabase.table('stock_data').upsert(data).execute()
-            
-            # Update Insider Trading (Separate Table)
-            insiders = fetch_insider_trading(symbol)
-            for trade in insiders:
-                trade_record = {
-                    'symbol': symbol,
-                    'transaction_date': trade.get('transactionDate'),
-                    'reporting_date': trade.get('reportingDate'),
-                    'company': trade.get('company'),
-                    'insider_name': trade.get('reportingName'),
-                    'transaction_type': trade.get('transactionType'),
-                    'securities_transacted': trade.get('securitiesTransacted'),
-                    'price': trade.get('price'),
-                    'securities_owned': trade.get('securitiesOwned'),
-                    'filing_url': trade.get('link')
-                }
-                # We need a unique constraint or careful insertion to avoid dupes if not using ID.
-                # For now, just insert. In production, check for existence or use a composite key.
-                # Simplification: Only insert if new (requires logic), or wipe and reload (costly).
-                # For an MVP, let's just insert and maybe clean up later or rely on ID uniqueness if generated by source?
-                # FMP doesn't give a unique trade ID. 
-                # Strategy: For now, we will skip insider trading upsert to avoid duplicates until we define a strategy.
-                # Or we can just store the latest X trades via a delete-insert strategy for the symbol.
-                pass 
+        try:
+            data = process_symbol(symbol)
+            if data:
+                stock_map[symbol] = data
+                processed_symbols.add(symbol)
+                save_checkpoint(processed_symbols)
                 
+                # Intermediate save to JSON (Safety)
+                with open(JSON_OUTPUT_PATH, 'w', encoding='utf-8') as f:
+                    json.dump(list(stock_map.values()), f, indent=2, ensure_ascii=False)
+                    
         except Exception as e:
-            print(f"Failed to process {symbol}: {e}")
+            print(f"Failed to process {symbol} after retries: {e}")
+            # Do not add to processed_symbols so it tries again next run
+            
+    # Final Save
+    final_list = list(stock_map.values())
+    with open(JSON_OUTPUT_PATH, 'w', encoding='utf-8') as f:
+        json.dump(final_list, f, indent=2, ensure_ascii=False)
+        
+    print(f"✅ Successfully saved {len(final_list)} stocks to {JSON_OUTPUT_PATH}")
 
 if __name__ == "__main__":
-    update_stock_data()
+    fetch_and_save_data()
