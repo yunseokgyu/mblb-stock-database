@@ -140,7 +140,7 @@ class ThirteenFCollector:
             holdings.sort(key=lambda x: x.get('value', 0), reverse=True)
             top_holdings = holdings[:100]
             
-            print(f"   Processing {len(top_holdings)} holdings for {report_date}...")
+            print(f"   Processing {len(top_holdings)} holdings for {report_date}... (Source: {xml_url})")
             
             for h in top_holdings:
                 name = h.get('name')
