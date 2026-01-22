@@ -86,6 +86,19 @@ export function HistoricalPortfolioViewer({ initialHoldings, history }: Historic
         return [...snapshotHoldings].sort((a, b) => b.value - a.value)
     }, [snapshotHoldings])
 
+    // Auto-select top holding on load or year change if none selected
+    React.useEffect(() => {
+        if (sortedSnapshotHoldings.length > 0 && !selectedHolding) {
+            // Re-construct the full holding object as done in the click handler
+            const top = sortedSnapshotHoldings[0]
+            setSelectedHolding({
+                ...top,
+                ...initialHoldings.find(init => init.symbol === top.symbol),
+                ...history.find(hist => hist.symbol === top.symbol)
+            })
+        }
+    }, [sortedSnapshotHoldings, selectedHolding, initialHoldings, history])
+
     const formatCurrency = (val: number) =>
         new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val)
 
@@ -130,7 +143,9 @@ export function HistoricalPortfolioViewer({ initialHoldings, history }: Historic
 
             {/* Analysis Panel (Conditional) */}
             {selectedHolding && (
-                <ValueAnalysisPanel holding={selectedHolding} />
+                <div className="animate-in fade-in slide-in-from-top-4 duration-700">
+                    <ValueAnalysisPanel holding={selectedHolding} />
+                </div>
             )}
 
             {/* Snapshot Table */}
@@ -160,7 +175,7 @@ export function HistoricalPortfolioViewer({ initialHoldings, history }: Historic
                                     <TableRow
                                         key={`${h.symbol}-${idx}`}
                                         className={`cursor-pointer transition-colors ${isSelected ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-slate-50'}`}
-                                        onClick={() => setSelectedHolding(h.symbol === selectedHolding?.symbol ? null : {
+                                        onClick={() => setSelectedHolding({
                                             ...h,
                                             // Merge generic symbol data with specific holding data that might be in initialHoldings
                                             ...initialHoldings.find(init => init.symbol === h.symbol),

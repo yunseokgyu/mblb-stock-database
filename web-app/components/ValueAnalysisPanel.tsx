@@ -249,23 +249,25 @@ export function ValueAnalysisPanel({ holding }: ValueAnalysisPanelProps) {
                 </div>
 
                 {/* AI Expert Analysis Section */}
-                {holding.ai_analysis && (
-                    <div className="mt-6 animate-in fade-in duration-700 delay-300">
-                        <div className="bg-slate-800/80 rounded-xl p-6 border border-slate-700 shadow-inner">
-                            <h4 className="flex items-center gap-2 font-bold text-lg text-indigo-300 mb-4">
-                                <span className="bg-indigo-500/20 p-1.5 rounded-lg">🤖</span> AI Investment Analysis (AI 투자 분석)
-                            </h4>
-                            <div className="text-slate-300 leading-relaxed text-sm md:text-base border-l-4 border-indigo-500 pl-4 whitespace-pre-line">
-                                {holding.ai_analysis}
-                            </div>
-                            <div className="flex gap-4 mt-4 text-xs text-slate-500 font-mono">
-                                <span className="flex items-center gap-1">✨ Valuation Check</span>
-                                <span className="flex items-center gap-1">✨ Dividend Trend</span>
-                                <span className="flex items-center gap-1">✨ Shareholder Policy</span>
-                            </div>
+                <div className="mt-6 animate-in fade-in duration-700 delay-300">
+                    <div className="bg-slate-800/80 rounded-xl p-6 border border-slate-700 shadow-inner">
+                        <h4 className="flex items-center gap-2 font-bold text-lg text-indigo-300 mb-4">
+                            <span className="bg-indigo-500/20 p-1.5 rounded-lg">🤖</span> AI Investment Analysis (AI 투자 분석)
+                        </h4>
+                        <div className="text-slate-300 leading-relaxed text-sm md:text-base border-l-4 border-indigo-500 pl-4 whitespace-pre-line">
+                            {holding.ai_analysis || (
+                                <span className="italic text-slate-500">
+                                    Analysis data not available for this asset yet. (이 자산에 대한 AI 분석 데이터가 아직 없습니다.)
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex gap-4 mt-4 text-xs text-slate-500 font-mono">
+                            <span className="flex items-center gap-1">✨ Valuation Check</span>
+                            <span className="flex items-center gap-1">✨ Dividend Trend</span>
+                            <span className="flex items-center gap-1">✨ Shareholder Policy</span>
                         </div>
                     </div>
-                )}
+                </div>
             </CardContent>
         </Card>
     )

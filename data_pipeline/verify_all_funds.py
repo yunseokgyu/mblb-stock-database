@@ -33,7 +33,7 @@ def verify_all():
         latest_date = res_latest.data[0]['report_period'] if res_latest.data else "N/A"
         
         # Earliest Date
-        res_earliest = supabase.table("fund_holdings").select("report_period").eq("fund_id", fid).order("report_period", asc=True).limit(1).execute()
+        res_earliest = supabase.table("fund_holdings").select("report_period").eq("fund_id", fid).order("report_period", desc=False).limit(1).execute()
         earliest_date = res_earliest.data[0]['report_period'] if res_earliest.data else "N/A"
         
         date_range = f"{earliest_date} ~ {latest_date}"
