@@ -1,5 +1,4 @@
 
-import DividendBacktest from '@/components/DividendBacktest'
 import { createClient } from '@/utils/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -38,7 +37,6 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
     const latestPeriod = periods?.[0]?.report_period
 
     // 3. Fetch Holdings from DB (Filtered by Latest Period)
-    // We explicitly fetch * from stock_data in case of hidden columns (ai_analysis, pe, etc)
     const { data: dbHoldings, error: holdingsError } = await supabase
         .from('fund_holdings')
         .select(`
@@ -46,7 +44,7 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
             stock_data:symbol ( * )
         `)
         .eq('fund_id', id)
-        .eq('report_period', latestPeriod) // Critical Fix
+        .eq('report_period', latestPeriod)
         .order('value', { ascending: false })
 
     // Transform DB holdings to match UI expected format
@@ -59,10 +57,11 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
         avg_buy_price: h.avg_buy_price,
         report_period: h.report_period,
         first_added: h.created_at,
-        // Pass through potential analysis fields from stock_data
+
+        // Pass through analysis fields
         ai_analysis: h.stock_data?.ai_analysis,
-        entry_pe: h.stock_data?.pe_ratio, // Map generic column if exists
-        current_pe: h.stock_data?.pe_ratio, // Mock current same as entry if history missing
+        entry_pe: h.stock_data?.pe_ratio,
+        current_pe: h.stock_data?.pe_ratio,
         current_dps: h.stock_data?.dps,
         dividend_yield: h.stock_data?.dividend_yield || 0,
 
@@ -87,16 +86,6 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
 
     const formatBillions = (val: number) =>
         `$${(val / 1_000_000_000).toFixed(2)}B`
-
-    // Prepare Data for Dividend Backtest (Convert holdings to 'Stock' interface)
-    const backtestStocks = holdings.map(h => ({
-        symbol: h.symbol,
-        company_name: h.name,
-        sector: h.sector,
-        dividend_yield: h.stock_data?.dividend_yield || (Math.random() * 3 + 1), // Mock yield if missing (1-4%)
-        years_of_growth: 5,
-        payout_ratio: 40
-    }))
 
     return (
         <div className="container mx-auto p-6 space-y-8 max-w-6xl">
@@ -154,10 +143,9 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
 
             {/* Content Tabs */}
             <Tabs defaultValue="holdings" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsList className="grid w-full grid-cols-2 mb-8">
                     <TabsTrigger value="holdings">Current Portfolio (현재 포트폴리오)</TabsTrigger>
                     <TabsTrigger value="history">Investment History (투자 역사 및 분석)</TabsTrigger>
-                    <TabsTrigger value="backtest">Dividend Backtest (배당 백테스트)</TabsTrigger>
                 </TabsList>
 
                 {/* Tab: Current Holdings */}
@@ -233,11 +221,6 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
                         initialHoldings={holdings}
                         history={fund.history || []}
                     />
-                </TabsContent>
-
-                {/* Tab: Dividend Backtest */}
-                <TabsContent value="backtest">
-                    <DividendBacktest availableStocks={backtestStocks} />
                 </TabsContent>
             </Tabs>
         </div>
