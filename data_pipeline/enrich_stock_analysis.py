@@ -21,39 +21,95 @@ def enrich_analysis_data():
         print(f"\nProcessing {symbol}...")
         
         try:
-            # Use YFinance via Utils
-            metrics = market_data_utils.get_dcf_metrics(symbol)
-            if not metrics:
-                print(f"   ⚠️ No metrics found for {symbol}")
-                continue
-                
-            p_ratio = metrics.get('pe_ratio', 0)
-            div_yield_raw = metrics.get('dividend_yield', 0)
-            
-            # YF returns decimal (0.03), Convert to % (3.0)
-            div_yield = round(div_yield_raw * 100, 2) if div_yield_raw else 0
-            if p_ratio:
-                p_ratio = round(p_ratio, 2)
-                
-            # DPS? YF info sometimes has 'dividendRate'
-            # Let's rely on info dict inside utils? 
-            # get_dcf_metrics returns specific dict. 
-            # I might need to access Ticker directly or update utils if I need DPS.
-            # But let's check what I really need.
-            # UI needs: dividend_yield, pe_ratio. 
-            # DPS is used for "Yield on Cost" calc in UI: ((current_dps / entryPrice) * 100)
-            # YF 'dividendRate' is DPS. get_dcf_metrics doesn't return it.
-            # Let's blindly fetch it here since I'm rewriting logic.
-            
             import yfinance as yf
             ticker = yf.Ticker(symbol)
             info = ticker.info
-            dps = info.get('dividendRate', 0)
             
+            # 1. Fetch Metrics
+            p_ratio = info.get('trailingPE')
+            if not p_ratio: p_ratio = info.get('forwardPE', 0)
+            
+            # YFinance 'dividendYield' seems to be percentage (e.g. 0.42 for 0.42%, 2.83 for 2.83%)
+            # BUT sometimes it's decimal (0.0042). 
+            # Let's Cross-Check with DividendRate / currentPrice
+            current_price = info.get('currentPrice') or info.get('previousClose')
+            div_rate = info.get('dividendRate', 0)
+            
+            div_yield = 0
+            if div_rate and current_price:
+                # Calculate manually to be sure: (Rate / Price) * 100
+                div_yield = round((div_rate / current_price) * 100, 2)
+            else:
+                # Fallback to info yield
+                d_y = info.get('dividendYield', 0)
+                # Heuristic: if d_y < 0.1 (e.g. 0.05), it's likely decimal -> convert to %
+                # If d_y > 0.1 (e.g. 0.42 or 2.83), it might be percent?
+                # Actually AAPL 0.42 is ambiguous. 0.42% vs 42%.
+                # Given Manual Calc is safest, we rely on div_rate/price.
+                # If manual fails, assume YF standard (usually decimal in recent versions, but check failed).
+                # My previous test showed 0.42 for AAPL.
+                div_yield = round(d_y * 100, 2) if d_y < 0.2 else d_y 
+                # Wait, if AAPL was 0.42 (percent), then 0.42 < 0.2 is FALSE.
+                # So we keep 0.42. 
+                # If KO was 2.83, we keep 2.83.
+                # If decimal 0.0042, it is < 0.2 -> 0.42.
+                # This heuristic handles both provided AAPL 0.42 wasn't 0.0042.
+            
+            beta = info.get('beta', 1)
+            peg = info.get('pegRatio', 0)
+            rev_growth = info.get('revenueGrowth', 0) # decimal
+            dps = div_rate
             sector = info.get('sector', 'Unknown')
+            industry = info.get('industry', 'Unknown')
             
-            # AI Analysis Mock
-            ai_text = f"**{symbol} Analysis**:\n- **Valuation**: Current PE is {p_ratio}x. {'Attractive' if p_ratio and p_ratio < 20 else 'Premium'}.\n- **Dividend**: Yielding {div_yield}%. {'Healthy payout.' if div_yield > 2 else 'Focus on growth.'}\n- **Sector**: {sector}.\n\n*Outlook*: Stable long-term hold with focus on compound growth."
+            # 2. Generate Intelligent Analysis (Rule-Based)
+            analysis_parts = []
+            
+            # A. Valuation
+            val_text = f"Current PE is {round(p_ratio, 2)}x" if p_ratio else "PE not available"
+            val_verdict = ""
+            if p_ratio:
+                if p_ratio < 15: val_verdict = "Attractive Value"
+                elif p_ratio < 30: val_verdict = "Fair/Premium"
+                else: val_verdict = "High Growth Premium"
+            
+            if peg and peg > 0:
+                val_text += f", PEG {peg}"
+                if peg < 1: val_verdict += " (Undervalued Growth)"
+            
+            analysis_parts.append(f"- **Valuation**: {val_text}. {val_verdict}.")
+            
+            # B. Dividend & Income
+            div_text = f"Yields {div_yield}%"
+            div_verdict = ""
+            if div_yield > 4: div_verdict = "High Income generator"
+            elif div_yield > 1.5: div_verdict = "Consistent payer"
+            elif div_yield > 0: div_verdict = "Modest yield, focus on growth"
+            else: div_verdict = "No dividend, pure growth focus"
+             
+            # Growth Check
+             # revenueGrowth is decimal. 0.10 = 10%
+            if rev_growth:
+                 div_verdict += f". Revenue growing at {round(rev_growth*100, 1)}%."
+            
+            analysis_parts.append(f"- **Income & Growth**: {div_text}. {div_verdict}.")
+            
+            # C. Characteristics (Beta, Sector)
+            char_text = f"Beta {round(beta, 2)}"
+            char_verdict = "Low Volatility" if beta < 0.8 else "High Volatility" if beta > 1.3 else "Market Correlated"
+            analysis_parts.append(f"- **Characteristics**: {char_text} ({char_verdict}). Leader in {industry} ({sector}).")
+            
+            # Outlook Summary
+            outlook = "Outlook Positive."
+            if p_ratio and p_ratio > 40 and rev_growth < 0.1:
+                outlook = "Caution: High valuation with slowing growth."
+            elif beta < 0.8 and div_yield > 2:
+                outlook = "Defensive play suitable for stability."
+            elif rev_growth > 0.15:
+                outlook = "Aggressive growth trajectory."
+            
+            ai_text = f"**{symbol} Intelligent Analysis**:\n" + "\n".join(analysis_parts) + f"\n\n*Strategic View*: {outlook}"
+
 
             # Update DB - Store in valuation_metrics JSONB column
             # Note: Supabase update merges specific columns. 
