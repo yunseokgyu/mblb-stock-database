@@ -59,11 +59,11 @@ export default async function HedgeFundDetailPage({ params }: { params: { id: st
         first_added: h.created_at,
 
         // Pass through analysis fields
-        ai_analysis: h.stock_data?.ai_analysis,
-        entry_pe: h.stock_data?.pe_ratio,
-        current_pe: h.stock_data?.pe_ratio,
-        current_dps: h.stock_data?.dps,
-        dividend_yield: h.stock_data?.dividend_yield || 0,
+        ai_analysis: h.stock_data?.valuation_metrics?.ai_analysis,
+        entry_pe: h.stock_data?.valuation_metrics?.pe_ratio,
+        current_pe: h.stock_data?.valuation_metrics?.pe_ratio,
+        current_dps: h.stock_data?.valuation_metrics?.dps,
+        dividend_yield: h.stock_data?.valuation_metrics?.dividend_yield || 0,
 
         stock_data: h.stock_data
     })) || []

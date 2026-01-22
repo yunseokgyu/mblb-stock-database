@@ -55,12 +55,18 @@ def enrich_analysis_data():
             # AI Analysis Mock
             ai_text = f"**{symbol} Analysis**:\n- **Valuation**: Current PE is {p_ratio}x. {'Attractive' if p_ratio and p_ratio < 20 else 'Premium'}.\n- **Dividend**: Yielding {div_yield}%. {'Healthy payout.' if div_yield > 2 else 'Focus on growth.'}\n- **Sector**: {sector}.\n\n*Outlook*: Stable long-term hold with focus on compound growth."
 
-            # Update DB
+            # Update DB - Store in valuation_metrics JSONB column
+            # Note: Supabase update merges specific columns. 
+            # If valuation_metrics is NULL, we overwrite. If exists, we might overwrite whole JSON or need to fetch-merge?
+            # Ideally overwrite is fine for now as we are the source of truth for these metrics.
+            
             update_data = {
-                "pe_ratio": p_ratio,
-                "dividend_yield": div_yield,
-                "dps": dps,
-                "ai_analysis": ai_text,
+                "valuation_metrics": {
+                    "pe_ratio": p_ratio,
+                    "dividend_yield": div_yield,
+                    "dps": dps,
+                    "ai_analysis": ai_text
+                },
                 "sector": sector
             }
             
